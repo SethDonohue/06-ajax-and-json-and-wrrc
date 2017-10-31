@@ -13,15 +13,15 @@ function Article (rawDataObj) {
 Article.all = [];
 
 // COMMENT: Why isn't this method written as an arrow function?
-// PUT YOUR RESPONSE HERE
+// This method doesn't use an arrow function because "this" is used outside of the scope of the function and is referring to a single instantiated article object.
+
 Article.prototype.toHtml = function() {
   let template = Handlebars.compile($('#article-template').text());
 
   this.daysAgo = parseInt((new Date() - new Date(this.publishedOn))/60/60/24/1000);
 
   // COMMENT: What is going on in the line below? What do the question mark and colon represent? How have we seen this same logic represented previously?
-  // Not sure? Check the docs!
-  // PUT YOUR RESPONSE HERE
+  // The line below is an if statement that checks is publishedOn exist. If it does, then this.publishStatus is assigned the template literal.  If it doesn't exist, then this.publishStatus is assigned to draft.  The question mark represents the ternary operator that divides the condition and the expressions and the colon is the else.  The same logic was represented as the longhand if/else statement.
   this.publishStatus = this.publishedOn ? `published ${this.daysAgo} days ago` : '(draft)';
   this.body = marked(this.body);
 
@@ -33,7 +33,7 @@ Article.prototype.toHtml = function() {
 // REVIEW: This function will take the rawData, how ever it is provided, and use it to instantiate all the articles. This code is moved from elsewhere, and encapsulated in a simply-named function for clarity.
 
 // COMMENT: Where is this function called? What does 'rawData' represent now? How is this different from previous labs?
-// PUT YOUR RESPONSE HERE
+// loadAll(); is called in the fetchAll function.  rawData represents the data that is loaded from either local storage or our database.  Before, rawData represented the objects of our local blog articles.
 Article.loadAll = rawData => {
   rawData.sort((a,b) => (new Date(b.publishedOn)) - (new Date(a.publishedOn)))
 
@@ -46,20 +46,27 @@ Article.fetchAll = () => {
   if (localStorage.rawData) {
     // REVIEW: When rawData is already in localStorage we can load it with the .loadAll function above and then render the index page (using the proper method on the articleView object).
 
-    //TODO: This function takes in an argument. What do we pass in to loadAll()?
-    Article.loadAll();
+    //DONE: This function takes in an argument. What do we pass in to loadAll()?
+    Article.loadAll(JSON.parse(localStorage.rawData));
 
-    //TODO: What method do we call to render the index page?
+    //DONE: What method do we call to render the index page?
+    articleView.initIndexPage();
 
-    // COMMENT: How is this different from the way we rendered the index page previously? What the benefits of calling the method here?
-    // PUT YOUR RESPONSE HERE
+    // COMMENT: How is this different from the way we rendered the index page previously? What is the benefits of calling the method here?
+    // Previously, the initIndexPage was called at the bottom of the HTML file.  The benefits of calling this method here would be to work with our function so we can append the local storage data to our page.
 
   } else {
     // TODO: When we don't already have the rawData:
     // - we need to retrieve the JSON file from the server with AJAX (which jQuery method is best for this?)
+    let rawData = $.getJSON('../data/hackerIpsum.json');
     // - we need to cache it in localStorage so we can skip the server call next time
+    localStorage.rawData = rawData;
     // - we then need to load all the data into Article.all with the .loadAll function above
+    console.log(rawData);
+    Article.loadAll(rawData);
     // - then we can render the index page
+    articleView.initIndexPage();
+
 
 
     // COMMENT: Discuss the sequence of execution in this 'else' conditional. Why are these functions executed in this order?
