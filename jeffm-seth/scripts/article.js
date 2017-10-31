@@ -45,7 +45,7 @@ Article.fetchAll = () => {
   // REVIEW: What is this 'if' statement checking for? Where was the rawData set to local storage?
   if (localStorage.rawData) {
     // REVIEW: When rawData is already in localStorage we can load it with the .loadAll function above and then render the index page (using the proper method on the articleView object).
-
+    console.log('LS exists');
     //DONE: This function takes in an argument. What do we pass in to loadAll()?
     Article.loadAll(JSON.parse(localStorage.rawData));
 
@@ -58,11 +58,12 @@ Article.fetchAll = () => {
   } else {
     // TODO: When we don't already have the rawData:
     // - we need to retrieve the JSON file from the server with AJAX (which jQuery method is best for this?)
+    console.log('LS does NOT exist');
     $.getJSON('../data/hackerIpsum.json',function (rawData) {
     // - we need to cache it in localStorage so we can skip the server call next time
-      rawData = JSON.stringify(localStorage.rawData);
+      localStorage.rawData = JSON.stringify(rawData);
       // - we then need to load all the data into Article.all with the .loadAll function above
-      console.log('rawData');
+      // console.log('rawData');
       Article.loadAll(rawData);
       // - then we can render the index page
       articleView.initIndexPage();
