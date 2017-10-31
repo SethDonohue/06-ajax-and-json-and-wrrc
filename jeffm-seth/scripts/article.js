@@ -58,18 +58,18 @@ Article.fetchAll = () => {
   } else {
     // TODO: When we don't already have the rawData:
     // - we need to retrieve the JSON file from the server with AJAX (which jQuery method is best for this?)
-    let rawData = $.getJSON('../data/hackerIpsum.json');
+    $.getJSON('../data/hackerIpsum.json',function (rawData) {
     // - we need to cache it in localStorage so we can skip the server call next time
-    localStorage.rawData = rawData;
-    // - we then need to load all the data into Article.all with the .loadAll function above
-    console.log(rawData);
-    Article.loadAll(rawData);
-    // - then we can render the index page
-    articleView.initIndexPage();
-
-
-
-    // COMMENT: Discuss the sequence of execution in this 'else' conditional. Why are these functions executed in this order?
-    // PUT YOUR RESPONSE HERE
+      localStorage.rawData = rawData;
+      // - we then need to load all the data into Article.all with the .loadAll function above
+      console.log('rawData');
+      Article.loadAll(rawData);
+      // - then we can render the index page
+      articleView.initIndexPage();
+    });
   }
+
+
+  // COMMENT: Discuss the sequence of execution in this 'else' conditional. Why are these functions executed in this order?
+  // We have to request from the server first to get the data, then load all the data to local storage before we can load it all, then we can call the initIndexPage to append to the page.
 }
